@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kinetic Economy | Simulateur de Trading</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="style.css?v=3">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
+                "three/examples/jsm/loaders/GLTFLoader": "https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js",
+                "three/examples/jsm/controls/OrbitControls": "https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js"
+            }
+        }
+    </script>
+</head>
+<body>
+    <!-- Vue Landing Page -->
+    <div id="landing-container" class="fullscreen-view">
+        <div class="landing-content">
+            <h1 class="glitch-text" data-text="KINETIC ECONOMY">KINETIC ECONOMY</h1>
+            <p class="subtitle">Simulateur de Trading Cybernétique</p>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h3>// EXTRACTION</h3>
+                    <p>Ouvrez des caisses de haute sécurité cryptographique pour extraire des actifs digitaux rares.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>// TRADING</h3>
+                    <p>Échangez vos actifs sur le marché noir du réseau. La rareté dynamique définit la valeur de chaque objet.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>// COLLECTION</h3>
+                    <p>Assemblez l'arsenal parfait et bâtissez votre fortune dans cette économie impitoyable.</p>
+                </div>
+            </div>
+
+            <button id="btn-initiate" class="primary-btn pulse-btn">INITIATE_SEQUENCE</button>
+        </div>
+    </div>
+
+    <!-- Vue Authentification -->
+    <div id="auth-container" class="fullscreen-view hidden">
+        <div class="auth-box glass-card">
+            <h2 id="auth-title">IDENTIFICATION REQUISE</h2>
+            <p id="auth-error" class="error-text hidden"></p>
+            
+            <form id="auth-form">
+                <div class="input-group">
+                    <label for="auth-email">ID // EMAIL</label>
+                    <input type="email" id="auth-email" required placeholder="netrunner@nightcity.net">
+                </div>
+                <div class="input-group">
+                    <label for="auth-password">CODE_ACCES // PASSWORD</label>
+                    <input type="password" id="auth-password" required placeholder="••••••••">
+                </div>
+                <button type="submit" id="btn-auth-submit" class="primary-btn w-100">SE CONNECTER</button>
+            </form>
+            
+            <div class="auth-switch">
+                <span id="auth-toggle-text">Nouveau sur le réseau ? </span>
+                <button id="btn-toggle-auth" class="text-btn">Créer un profil</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vue de Chargement (Cube SVG) -->
+    <div id="loading-container" class="fullscreen-view hidden">
+        <div class="loading-content">
+            <svg width="256" height="256" viewBox="0 0 512 512" fill="none" overflow="visible" xmlns="http://www.w3.org/2000/svg">
+                <use href="#cube" x="128" y="320" stroke-width="2" opacity="0.3">
+                    <animate attributeName="stroke" dur="6s" repeatCount="indefinite" values="#FF003C;#00F0FF;#FCEE0A;#FF003C"/>
+                </use>
+                <rect width="512" height="512" y="384" fill="url(#fade)"/>
+                <use href="#cube" x="128" y="128" stroke-width="2">
+                    <animate attributeName="stroke" dur="6s" repeatCount="indefinite" values="#FF003C;#00F0FF;#FCEE0A;#FF003C"/>
+                </use>
+                <defs>
+                    <g id="cube">
+                        <use href="#cube_outline" stroke-linejoin="round" stroke-width="16" fill="url(#stars)"/>
+                        <use href="#cube_base" stroke-width=".5"/>
+                        <use href="#cube_outline" stroke-linejoin="round" stroke-width="6" stroke="#0f0a0a"/>
+                    </g>
+                    <g id="cube_outline">
+                        <path>
+                            <animate attributeName="d" dur="1.5s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;0.5;1" keySplines="0.8 0.2 0.6 0.9; 0.8 0.2 0.6 0.9; 0.8 0.2 0.6 0.9" values="M10 64 L128 0 L246 64 L246 192 L128 256 L10 192Z; M40 20 L216 20 L216 108 L216 236 L40 236 L40 172Z; M216 20 L40 20 L40 108 L40 236 L216 236 L216 172Z; M246 64 L128 0 L10 64 L10 192 L128 256 L246 192Z"/>
+                        </path>
+                    </g>
+                    <g id="cube_base">
+                        <path fill="#fff1">
+                        <animate attributeName="d" dur="1.5s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.8 0.2 0.6 0.9; 0.8 0.2 0.6 0.9" values="M10 64 L128 0 L246 64 L128 128Z; M40 20 L216 20 L216 108 L40 108Z; M128 0 L246 64 L128 128 L10 64Z"/>
+                        </path>
+                        <path>
+                        <animate attributeName="d" dur="1.5s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;0.5;1" keySplines="0.8 0.2 0.6 0.9; 0.8 0.2 0.6 0.9; 0.8 0.2 0.6 0.9" values="M10 64 L128 128 L128 256 L10 192Z; M40 20 L40 108 L40 236 L40 172Z; M216 20 L216 108 L216 236 L216 172Z; M246 64 L128 128 L128 256 L246 192Z"/>
+                        <animate attributeName="fill" dur="1.5s" repeatCount="indefinite" keyTimes="0;0.5;0.5;1" values="#fff0;#fff0;#fff2;#fff2"/>
+                        </path>
+                        <path fill="#407080">
+                        <animate attributeName="d" dur="1.5s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.8 0.2 0.6 0.9; 0.8 0.2 0.6 0.9" values="M246 64 L128 128 L128 256 L246 192Z; M216 108 L40 108 L40 236 L216 236Z; M128 128 L10 64 L10 192 L128 256Z"/>
+                        <animate attributeName="fill" dur="1.5s" repeatCount="indefinite" keyTimes="0;0.5;1" values="#fff2;#fff1;#fff0"/>
+                        </path>
+                    </g>
+                    <linearGradient id="fade" gradientTransform="rotate(90)">
+                        <stop offset="0" stop-color="#0f0a0a00"/>
+                        <stop offset="0.25" stop-color="#0f0a0aff"/>
+                    </linearGradient>
+                    <linearGradient id="sky" gradientTransform="rotate(90)">
+                        <stop offset="0.5" stop-color="#0f0a0a"/>
+                        <stop offset="1" stop-color="#40354a"/>
+                    </linearGradient>
+                    <pattern id="stars" x="0" y="0" width="50%" height="50%" patternUnits="userSpaceOnUse" patternContentUnits="userSpaceOnUse">
+                        <rect width="256" height="256" fill="url(#sky)"/>
+                        <use href="#star01" x="24" y="32"  fill="white"/>
+                        <use href="#star01" x="64" y="96"  fill="#ad9dcb" transform="rotate(90 80 112)"/>
+                        <use href="#star01" x="224" y="102"  fill="#ad9dcb"/>
+                        <use href="#star01" x="192" y="112"  fill="#E0E8EA" transform="rotate(90 80 112)"/>
+                        <use href="#star02" x="16" y="64"  fill="#ad9dcb"/>
+                        <use href="#star03" x="96" y="16"  fill="#E0E8EA"/>
+                        <use href="#star04" x="64" y="64"  fill="white"/>
+                        <use href="#star04" x="8" y="16"  fill="#ad9dcb"/>
+                        <use href="#star04" x="110" y="96"  fill="#E0E8EA"/>
+                        <use href="#star02" x="160" y="24"  fill="#ad9dcb"/>
+                        <use href="#star03" x="196" y="60"  fill="#E0E8EA"/>
+                        <use href="#star04" x="64" y="212"  fill="white"/>
+                        <use href="#star04" x="218" y="216"  fill="#ad9dcb"/>
+                        <use href="#star03" x="228" y="220"  fill="#E0E8EA"/>
+                        <use href="#star02" x="140" y="128"  fill="#ad9dcb"/>
+                        <use href="#star03" x="24" y="140"  fill="#E0E8EA"/>
+                        <use href="#star04" x="95" y="160"  fill="white"/>
+                        <use href="#star04" x="180" y="128"  fill="#ad9dcb"/>
+                        <use href="#star03" x="200" y="136"  fill="#E0E8EA"/>
+                        <use href="#star10" x="120" y="120"  stroke="#E0E8EA"/>
+                        <use href="#star11" x="48" y="64"  stroke="#ad9dcb"/>
+                    </pattern>
+                    <path id="star01" transform="scale(0.5)">
+                        <animate attributeName="d" dur="3s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.8 0.2 0.6 0.9; 0.8 0.2 0.6 0.9" values="M16 0 Q16 16 24 16 Q16 16 16 32 Q16 16 8 16 Q16 16 16 0Z; M16 8 Q16 16 32 16 Q16 16 16 24 Q16 16 0 16 Q16 16 16 8Z; M16 0 Q16 16 24 16 Q16 16 16 32 Q16 16 8 16 Q16 16 16 0Z"/>
+                    </path>
+                    <circle id="star02">
+                        <animate attributeName="r" dur="3s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.8 0.2 0.6 0.9; 0.8 0.2 0.6 0.9" values="0;2;0"/>
+                    </circle>
+                    <circle id="star03">
+                        <animate attributeName="r" dur="6s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.8 0.2 0.6 0.9; 0.8 0.2 0.6 0.9" values="3;1;3"/>
+                    </circle>
+                    <circle id="star04" r="1"/>
+                    <path id="star10" stroke-width="2">
+                        <animate attributeName="d" dur="5s" repeatCount="indefinite" keyTimes="0;0.90;0.97;1" keySplines="0 0.4 1 0.2; 0 0.4 1 0.2; 0 0.4 1 0.2" values="M64 0 L64 0Z; M64 0 L64 0Z; M48 12 L0 48Z; M0 48 L0 48Z"/>
+                        <animate attributeName="opacity" dur="5s" repeatCount="indefinite" keyTimes="0;0.90;0.97;1" values="1; 1; 0.6; 0"/>
+                    </path>
+                    <path id="star11" stroke-width="3">
+                        <animate attributeName="d" dur="6s" repeatCount="indefinite" delay="3s" keyTimes="0;0.90;0.95;1" keySplines="0 0.4 1 0.2; 0 0.4 1 0.2; 0 0.4 1 0.2" values="M64 0 L64 0Z; M64 0 L64 0Z; M48 12 L0 48Z; M0 48 L0 48Z"/>
+                        <animate attributeName="opacity" dur="6s" repeatCount="indefinite" delay="3s" keyTimes="0;0.90;0.95;1" values="1; 1; 0.6; 0"/>
+                    </path>
+                </defs>
+            </svg>
+            <div style="margin-top:20px; font-family:'JetBrains Mono',monospace; color:var(--accent-cyan);">CALCUL DES TRAJECTOIRES...</div>
+        </div>
+    </div>
+
+    <div id="app-container" class="hidden">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <span class="kinetic">KINETIC</span>
+                <span class="economy">ECONOMY</span>
+            </div>
+            <ul class="nav-links">
+                <li class="active"><a href="#dashboard"><i class="icon-dashboard"></i> Tableau de bord</a></li>
+                <li><a href="#market"><i class="icon-market"></i> Marché</a></li>
+                <li><a href="#inventory"><i class="icon-inventory"></i> Inventaire</a></li>
+                <li><a href="#fishing"><i class="icon-fishing"></i> Salle de Pêche</a></li>
+            </ul>
+            <div class="user-stats">
+                <div class="stat">
+                    <span class="label">Solde</span>
+                    <span id="user-balance" class="value">500.00 €</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="content">
+            <!-- Top bar supprimée -->
+
+
+            <section id="dashboard-view" class="view">
+                <div class="hero-section">
+                    <h1>Bienvenue sur le <span class="gradient-text">Marché Cinétique</span></h1>
+                    <p>La rareté dynamique définit la valeur. Surveillez "Digital Rust" sur vos actifs.</p>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div id="loot-box-container" class="glass-card">
+                        <h2>Objet en Vedette</h2>
+                        <div class="box-preview" id="main-preview-3d">
+                            <!-- Three.js will render here -->
+                        </div>
+                        <div class="box-actions">
+                            <button id="open-box-btn" class="primary-btn">Ouvrir Box Aléatoire (10 €)</button>
+                        </div>
+                    </div>
+
+                    <div id="live-feed" class="glass-card">
+                        <h2>Dernières Activités</h2>
+                        <ul id="activity-list">
+                            <li><span class="time">12:04</span> <span class="user">Système</span> : Bienvenue dans l'économie cinétique.</li>
+                            <li><span class="time">12:02</span> <span class="user">Admin</span> : Digital Rust activé.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="market-view" class="view hidden" style="position: relative; overflow: hidden; min-height: 100%;">
+                <div style="position: absolute; inset: 0; pointer-events: none; z-index: 1; background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.95) 100%);"></div>
+                
+                <div style="position: relative; z-index: 10;">
+                    <div class="boxes-grid" id="boxes-gallery">
+                        <!-- Généré dynamiquement -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Vue Inventaire (Fond Neural Network) -->
+            <section id="inventory-view" class="view hidden" style="position: relative; overflow: hidden; width: 100%; height: 100%; border-radius: var(--radius-lg);">
+                <div style="position: relative; z-index: 10; padding: 40px; pointer-events: none;">
+                    <h1><span class="gradient-text">INVENTAIRE</span></h1>
+                    <p style="color: var(--text-muted); font-family: 'JetBrains Mono', monospace; margin-top: 10px;">> SYNCHRONISATION NEURONALE EN COURS...</p>
+                </div>
+            </section>
+
+            <!-- Vue Unifiée : Détails + Contenu de Caisse -->
+            <section id="box-detail-view" class="view hidden scrollable-view">
+                <div class="back-nav-floating">
+                    <button class="back-btn" data-target="market-view">← Retour au Marché</button>
+                </div>
+
+                <!-- Partie 1 : Le Héros (La Caisse flottante) -->
+                <div class="box-hero-section">
+                    <div id="box-detail-3d" class="box-detail-render-clean"></div>
+                    <div class="box-hero-info">
+                        <h1 id="box-detail-title">Nom de la Caisse</h1>
+                        <p id="box-detail-desc">Cette collection contient des objets cinétiques rares.</p>
+                    </div>
+                    <div class="scroll-hint">
+                        <p>SCROLLER POUR VOIR LE CONTENU</p>
+                        <div class="chevron"></div>
+                        <div class="chevron"></div>
+                    </div>
+                </div>
+
+                <!-- Partie 2 : La Grille (Contenu) -->
+                <div class="box-inventory-section">
+                    <h2 class="section-title">// CONTENU DE LA COLLECTION</h2>
+                    <div class="skins-grid" id="skins-grid-container">
+                        <!-- Les skins seront injectés ici -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Vue Détail d'un Skin -->
+            <section id="skin-detail-view" class="view hidden">
+                <div class="back-nav">
+                    <button class="back-btn" data-target="grid-content-view">← Retour à la Liste</button>
+                </div>
+                <div class="detail-container">
+                    <div class="large-view-3d" id="skin-detail-3d"></div>
+                    <div class="skin-actions">
+                        <h1 id="skin-name-display">Nom du Skin</h1>
+                        <div class="skin-meta">
+                            <span id="skin-rarity-display" class="rarity-tag">Rareté</span>
+                            <span id="skin-drop-display" class="drop-chance">Taux : 10%</span>
+                        </div>
+                        <p class="skin-description">
+                            Un objet cinétique de haute précision. Inspectez-le sous tous les angles.
+                        </p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <canvas id="market-bg-canvas" class="bg-canvas"></canvas>
+    <canvas id="neural-bg-canvas" class="bg-canvas"></canvas>
+    <canvas id="pyramid-bg-canvas" class="bg-canvas"></canvas>
+    <div id="grid-bg-canvas" class="bg-canvas"></div>
+
+    <script src="market-bg.js"></script>
+    <script type="module" src="pyramid-bg.js"></script>
+    <script type="module" src="neural-bg.js"></script>
+    <script src="grid-bg.js"></script>
+    <script type="module" src="app.js?v=5"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+#-- Nommez tout le projet en vaultdrop Mettre tous les fonds de toutes les pages au milieu au centre cent Il commence à faire le menu Et aussi mettre la tabulation Avec le De Castles Émettre aussi la souris En mode castles Et commence à faire le menu du groupe--#
